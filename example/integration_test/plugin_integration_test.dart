@@ -6,7 +6,6 @@
 // For more information about Flutter integration tests, please see
 // https://docs.flutter.dev/cookbook/testing/integration/introduction
 
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -15,11 +14,11 @@ import 'package:flutter_generic_camera/flutter_generic_camera.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('getPlatformVersion test', (WidgetTester tester) async {
+  testWidgets('openCamera test', (WidgetTester tester) async {
     final FlutterGenericCamera plugin = FlutterGenericCamera();
-    final String? version = await plugin.getPlatformVersion();
+    final Map<String, dynamic> results = await plugin.openCamera();
     // The version string depends on the host platform running the test, so
     // just assert that some non-empty string is returned.
-    expect(version?.isNotEmpty, true);
+    expect(results.isNotEmpty, true);
   });
 }

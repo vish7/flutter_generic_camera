@@ -4,12 +4,9 @@ import 'package:flutter_generic_camera/flutter_generic_camera_platform_interface
 import 'package:flutter_generic_camera/flutter_generic_camera_method_channel.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-class MockFlutterGenericCameraPlatform
-    with MockPlatformInterfaceMixin
-    implements FlutterGenericCameraPlatform {
-
+class MockFlutterGenericCameraPlatform with MockPlatformInterfaceMixin implements FlutterGenericCameraPlatform {
   @override
-  Future<String?> getPlatformVersion() => Future.value('42');
+  Future<Map<String, dynamic>> openCamera() => Future.value({});
 }
 
 void main() {
@@ -19,11 +16,11 @@ void main() {
     expect(initialPlatform, isInstanceOf<MethodChannelFlutterGenericCamera>());
   });
 
-  test('getPlatformVersion', () async {
+  test('openCamera', () async {
     FlutterGenericCamera flutterGenericCameraPlugin = FlutterGenericCamera();
     MockFlutterGenericCameraPlatform fakePlatform = MockFlutterGenericCameraPlatform();
     FlutterGenericCameraPlatform.instance = fakePlatform;
 
-    expect(await flutterGenericCameraPlugin.getPlatformVersion(), '42');
+    expect(await flutterGenericCameraPlugin.openCamera(), {});
   });
 }

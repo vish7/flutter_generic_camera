@@ -1,8 +1,7 @@
-
 import 'flutter_generic_camera_platform_interface.dart';
 
 class FlutterGenericCamera {
-  Future<String?> getPlatformVersion() {
-    return FlutterGenericCameraPlatform.instance.getPlatformVersion();
+  Future<Map<String, dynamic>> openCamera() {
+    return FlutterGenericCameraPlatform.instance.openCamera();
   }
 }

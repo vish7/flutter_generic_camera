@@ -10,8 +10,8 @@ class MethodChannelFlutterGenericCamera extends FlutterGenericCameraPlatform {
   final methodChannel = const MethodChannel('flutter_generic_camera');
 
   @override
-  Future<String?> getPlatformVersion() async {
-    final version = await methodChannel.invokeMethod<String>('getPlatformVersion');
-    return version;
+  Future<Map<String, dynamic>> openCamera() async {
+    final results = await methodChannel.invokeMethod('openCamera');
+    return Map<String, dynamic>.from(results);
   }
 }

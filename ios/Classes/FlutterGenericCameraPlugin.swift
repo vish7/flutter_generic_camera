@@ -10,8 +10,15 @@ public class FlutterGenericCameraPlugin: NSObject, FlutterPlugin {
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
-    case "getPlatformVersion":
-      result("iOS " + UIDevice.current.systemVersion)
+    case "openCamera":
+      if let viewController = UIApplication.shared.delegate?.window??.rootViewController {
+        let cameraViewController = GenericCameraController()
+        cameraViewController.modalPresentationStyle = .fullScreen
+        viewController.present(cameraViewController, animated: true, completion: nil)
+        result([:])
+      } else {
+        result(FlutterError(code: "UNAVAILABLE", message: "Root view controller not available", details: nil))
+      }
     default:
       result(FlutterMethodNotImplemented)
     }
