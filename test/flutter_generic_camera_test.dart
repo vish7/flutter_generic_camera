@@ -6,7 +6,7 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 class MockFlutterGenericCameraPlatform with MockPlatformInterfaceMixin implements FlutterGenericCameraPlatform {
   @override
-  Future<Map<String, dynamic>> openCamera() => Future.value({});
+  Future<Map<String, dynamic>> openCamera([Map<String, Object>? map]) => Future.value({});
 }
 
 void main() {

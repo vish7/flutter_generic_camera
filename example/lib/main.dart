@@ -34,7 +34,11 @@ class _MyAppState extends State<MyApp> {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  _flutterGenericCameraPlugin.openCamera();
+                  _flutterGenericCameraPlugin.openCamera({
+                    'cameramode': 'photo',
+                    'flashmode': 1,
+                    'cameraid': '0',
+                  });
                 },
                 child: const Text("Open Camera"),
               ),
