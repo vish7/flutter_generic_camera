@@ -22,15 +22,17 @@ class MainActivity: FlutterActivity(){
                 val arguments = call.arguments as Map<String, Any>
 
                 val cameramode = arguments[costString.CAMERAMODE] as String
-                val flashmode = arguments[costString.FLASHMODE] as Int
+                val flashmode = arguments[costString.FLASHMODE] as String
                 val cameraid = arguments[costString.CAMERAID] as String
                 val isMultiCapture = arguments[costString.ISMULTICAPTURE] as Boolean
+                val zoomlevel = arguments[costString.ZOOMLEVEL] as String
 
                 val intent = Intent(this, CustomCameraActivity::class.java)
                 intent.putExtra(costString.CAMERAMODE,cameramode)
                 intent.putExtra(costString.FLASHMODE,flashmode)
                 intent.putExtra(costString.CAMERAID,cameraid)
                 intent.putExtra(costString.ISMULTICAPTURE,isMultiCapture)
+                intent.putExtra(costString.ZOOMLEVEL,zoomlevel)
                 startActivityForResult(intent, CAMERA_REQUEST_CODE)
                 result.success(null)
 

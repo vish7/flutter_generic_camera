@@ -6,11 +6,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.camera.core.ImageCapture
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -24,7 +26,10 @@ import dagger.hilt.android.AndroidEntryPoint
 class CustomCameraActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCustomCameraBinding
     private val REQUEST_RECORD_AUDIO_PERMISSION = 200
-    var flashmode = ImageCapture.FLASH_MODE_OFF
+  //  var flashmode = ImageCapture.FLASH_MODE_OFF
+    var flashtype : Int? = -1
+    var flashmode : String? = null
+    var zoomlevel : String? = null
     var isMultiCapture = false
     var cameramode = costString.CAMERAMODEVALUE
     private var cameraId = costString.CAMERA_BACK
@@ -46,8 +51,21 @@ class CustomCameraActivity : AppCompatActivity() {
         val intent = intent
         cameraId = intent.getStringExtra(costString.CAMERAID).toString()
         cameramode = intent.getStringExtra(costString.CAMERAMODE).toString()
-        flashmode = intent.getIntExtra(costString.FLASHMODE,ImageCapture.FLASH_MODE_OFF)
+        flashmode = intent.getStringExtra(costString.FLASHMODE).toString()
+        zoomlevel = intent.getStringExtra(costString.ZOOMLEVEL).toString()
         isMultiCapture = intent.getBooleanExtra(costString.ISMULTICAPTURE,false)
+
+
+        if(flashmode.equals("auto")){
+            flashtype = ImageCapture.FLASH_MODE_AUTO
+            selectFlashItem(binding.tvAuto)
+        }else if(flashmode.equals("on")){
+            flashtype = ImageCapture.FLASH_MODE_ON
+            selectFlashItem(binding.tvOn)
+        }else if(flashmode.equals("off")){
+            flashtype = ImageCapture.FLASH_MODE_OFF
+            selectFlashItem(binding.tvOff)
+        }
 
 
         val timer = object: CountDownTimer(3600000, 1000) {
@@ -95,7 +113,7 @@ class CustomCameraActivity : AppCompatActivity() {
 
 
         if (allPermissionsGranted()) {
-            viewModel.initializeCamera(this, cameraId,flashmode, binding.viewFinder)
+            viewModel.initializeCamera(this, cameraId,flashtype!!, binding.viewFinder)
         } else {
             ActivityCompat.requestPermissions(this, requiredPermissions, requestCodePermissions)
         }
@@ -160,6 +178,64 @@ class CustomCameraActivity : AppCompatActivity() {
         }
 
 
+        binding.ivFilter.setOnClickListener {
+            if (binding.llFilter.isVisible) {
+                binding.llFilter.visibility = View.GONE
+            }else{
+                binding.llFilter.visibility = View.VISIBLE
+            }
+        }
+        binding.tvAuto.setOnClickListener {
+            flashtype = ImageCapture.FLASH_MODE_AUTO
+            selectFlashItem(binding.tvAuto)
+            viewModel.initializeCamera(this, cameraId,flashtype!!, binding.viewFinder)
+        }
+        binding.tvOn.setOnClickListener {
+            flashtype = ImageCapture.FLASH_MODE_ON
+            selectFlashItem(binding.tvOn)
+            viewModel.initializeCamera(this, cameraId,flashtype!!, binding.viewFinder)
+        }
+        binding.tvOff.setOnClickListener {
+            flashtype = ImageCapture.FLASH_MODE_OFF
+            selectFlashItem(binding.tvOff)
+            viewModel.initializeCamera(this, cameraId,flashtype!!, binding.viewFinder)
+        }
+        binding.tvFront.setOnClickListener {
+            selectCameraItem(binding.tvFront)
+        }
+        binding.tvBack.setOnClickListener {
+            selectCameraItem(binding.tvBack)
+        }
+        binding.tvZeroPointFiveX.setOnClickListener {
+            selectZoomItem(binding.tvZeroPointFiveX)
+        }
+        binding.tvOneX.setOnClickListener {
+            selectZoomItem(binding.tvOneX)
+        }
+        binding.tvTwoX.setOnClickListener {
+            selectZoomItem(binding.tvTwoX)
+        }
+    }
+
+    private fun selectFlashItem(textId: TextView) {
+        binding.tvAuto.setBackgroundResource(0)
+        binding.tvOn.setBackgroundResource(0)
+        binding.tvOff.setBackgroundResource(0)
+
+        textId.setBackgroundResource(R.drawable.ic_selected_item)
+    }
+    private fun selectCameraItem(textId: TextView) {
+        binding.tvFront.setBackgroundResource(0)
+        binding.tvBack.setBackgroundResource(0)
+
+        textId.setBackgroundResource(R.drawable.ic_selected_item)
+    }
+    private fun selectZoomItem(textId: TextView) {
+        binding.tvZeroPointFiveX.setBackgroundResource(0)
+        binding.tvOneX.setBackgroundResource(0)
+        binding.tvTwoX.setBackgroundResource(0)
+
+        textId.setBackgroundResource(R.drawable.ic_selected_item)
     }
 
     private fun allPermissionsGranted() = requiredPermissions.all {
@@ -200,7 +276,7 @@ class CustomCameraActivity : AppCompatActivity() {
             }
             requestCodePermissions -> {
                 if (allPermissionsGranted()) {
-                    viewModel.initializeCamera(this, cameraId,flashmode, binding.viewFinder)
+                    viewModel.initializeCamera(this, cameraId,flashtype!!, binding.viewFinder)
                 } else {
                     finish()
                 }

@@ -8,6 +8,7 @@ object  costString {
     const val CAMERAMODE = "cameramode"
     const val FLASHMODE = "flashmode"
     const val ISMULTICAPTURE = "isMultiCapture"
+    const val ZOOMLEVEL = "zoomlevel"
 
     const val CAMERAMODEVALUE = "photo"
     const val CAMERA_FRONT = "1"

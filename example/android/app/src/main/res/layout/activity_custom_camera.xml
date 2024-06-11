@@ -26,12 +26,12 @@
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:id="@+id/circle_imageView"
+                        android:id="@+id/ivFilter"
                         android:layout_width="@dimen/m40dp"
                         android:layout_height="@dimen/m50dp"
                         android:padding="8dp"
                         android:src="@drawable/ic_filter"
-                        android:tint="@color/white" />
+                        app:tint="@color/white" />
 
                     <TextView
                         android:id="@+id/textViewTimer"
@@ -63,11 +63,146 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
+
         <androidx.camera.view.PreviewView
             android:id="@+id/viewFinder"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/appBarcustom" />
+
+        <LinearLayout
+            android:id="@+id/llFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/appBarcustom"
+            android:background="@drawable/bg_gradient"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/m10dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textSize="@dimen/s14sp"
+                    android:layout_marginVertical="@dimen/m5dp"
+                    android:text="Flash"
+                    android:textColor="@color/white" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/item_bg_gradient"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvAuto"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:padding="@dimen/m10dp"
+                        android:gravity="center"
+                        android:text="Auto"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/tvOn"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="On"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/tvOff"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Off"
+                        android:textColor="@color/white" />
+                </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textSize="@dimen/s14sp"
+                    android:layout_marginVertical="@dimen/m10dp"
+                    android:text="Camera"
+                    android:textColor="@color/white" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/item_bg_gradient"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvFront"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:padding="@dimen/m10dp"
+                        android:gravity="center"
+                        android:text="Front"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/tvBack"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Back"
+                        android:textColor="@color/white" />
+                </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textSize="@dimen/s14sp"
+                    android:layout_marginVertical="@dimen/m10dp"
+                    android:text="Zoom"
+                    android:textColor="@color/white" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/item_bg_gradient"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvZeroPointFiveX"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:padding="@dimen/m10dp"
+                        android:gravity="center"
+                        android:text="0.5x"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/tvOneX"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="1.0x"
+                        android:textColor="@color/white" />
+                    <TextView
+                        android:id="@+id/tvTwoX"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="2.0x"
+                        android:textColor="@color/white" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -112,8 +247,8 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_gravity="center"
+                    android:layout_weight="1"
                     android:orientation="vertical">
 
                     <LinearLayout

@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCapture.*
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -36,8 +37,11 @@ class CameraViewModel @Inject constructor() : ViewModel() {
     private val _videoFile = MutableLiveData<Uri>()
     val videoFile: LiveData<Uri> get() = _videoFile
 
+    var flashtype :Int? = -1
+
     fun initializeCamera(context: Context, cameraId: String, flashmode:Int, previewView: PreviewView) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+
 
         cameraProviderFuture.addListener({
             val cameraProvider = cameraProviderFuture.get()
@@ -45,8 +49,10 @@ class CameraViewModel @Inject constructor() : ViewModel() {
             val preview = Preview.Builder().build().also {
                 it.setSurfaceProvider(previewView.surfaceProvider)
             }
+
             val imageCapture = ImageCapture.Builder().build()
 
+            imageCapture.flashMode = flashmode
             val recorder = Recorder.Builder()
                 .setQualitySelector(QualitySelector.from(Quality.HIGHEST))
                 .build()

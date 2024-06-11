@@ -11,4 +11,5 @@
     <dimen name="m60dp">60dp</dimen>
     <dimen name="m30dp">30dp</dimen>
     <dimen name="m5dp">5dp</dimen>
+    <dimen name="s14sp">14sp</dimen>
 </resources>

@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_generic_camera/flutter_generic_camera.dart';
+import 'package:flutter_generic_camera_example/CaptureMode.dart';
+import 'package:flutter_generic_camera_example/FlashMode.dart';
+import 'package:flutter_generic_camera_example/ZoomLevel.dart';
 
 import 'ImageModel.dart';
 
@@ -63,8 +66,9 @@ class _MyAppState extends State<MyApp> {
               child: ElevatedButton(
                 onPressed: () {
                   _flutterGenericCameraPlugin.openCamera({
-                    'cameramode': 'photo',
-                    'flashmode': 1,
+                    'cameramode': CaptureMode.photo.name.toString(),
+                    'flashmode': FlashMode.auto.name.toString(),
+                    'zoomlevel': ZoomLevel.oneX.name.toString(),
                     'cameraid': '0',
                     'isMultiCapture': false,
                   });
