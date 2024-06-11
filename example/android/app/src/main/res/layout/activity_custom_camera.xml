@@ -2,59 +2,245 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".CustomCameraActivity">
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarcustom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <androidx.appcompat.widget.Toolbar
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarcustom"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/black"
+                android:minHeight="?attr/actionBarSize">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/circle_imageView"
+                        android:layout_width="@dimen/m40dp"
+                        android:layout_height="@dimen/m50dp"
+                        android:padding="8dp"
+                        android:src="@drawable/ic_filter"
+                        android:tint="@color/white" />
+
+                    <TextView
+                        android:id="@+id/textViewTimer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="00:00"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/s16sp" />
+
+                    <TextView
+                        android:id="@+id/tvClose"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerInParent="true"
+                        android:layout_centerVertical="true"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:text="Close"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/s16sp" />
+                </RelativeLayout>
+            </androidx.appcompat.widget.Toolbar>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/viewFinder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/appBarcustom" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/toolbar"
-            android:background="@color/black"
-            android:minHeight="?attr/actionBarSize">
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:background="@color/black">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                tools:listitem="@layout/item_image_list" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/recyclerView"
+                android:layout_marginStart="@dimen/m20dp"
+                android:layout_marginEnd="@dimen/m20dp"
+                android:layout_marginBottom="@dimen/m10dp"
+                android:gravity="center"
                 android:orientation="horizontal">
-                <ImageView
+
+                <LinearLayout
+                    android:id="@+id/llDisplayImage"
                     android:layout_width="@dimen/m50dp"
                     android:layout_height="@dimen/m50dp"
-                    android:src="@drawable/ic_filter"
-                    android:padding="8dp"
-                    android:tint="@color/white"
-                    android:id="@+id/circle_imageView"/>
-                <TextView
-                    android:id="@+id/textViewTimer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="@dimen/m20dp"
-                    android:text=""
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/s16sp"/>
-                <TextView
-                    android:id="@+id/tvClose"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Close"
-                    android:padding="8dp"
-                    android:layout_gravity="center"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/s16sp"/>
-            </LinearLayout>
-        </androidx.appcompat.widget.Toolbar>
+                    android:background="@drawable/ic_square_round_corner"
+                    android:gravity="center">
 
-    </com.google.android.material.appbar.AppBarLayout>
-    <androidx.camera.view.PreviewView
-        android:id="@+id/viewFinder"
-        android:layout_below="@+id/appBarcustom"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+                    <ImageView
+                        android:id="@+id/ivImage"
+                        android:layout_width="@dimen/m40dp"
+                        android:layout_height="@dimen/m40dp"
+                        android:layout_gravity="center"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_img_gallery" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/llPhotoVideo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/recyclerView"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvPhoto"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Photo"
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+
+                    </LinearLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/rlPhotos"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/m80dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerInParent="true"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cameraCaptureButton"
+                            android:layout_width="@dimen/m70dp"
+                            android:layout_height="@dimen/m70dp"
+                            android:layout_centerInParent="true"
+                            android:text="Capture"
+                            app:cardBackgroundColor="#FFFFF7"
+                            app:cardCornerRadius="@dimen/m35dp"
+                            app:cardElevation="0dp" />
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:layout_centerInParent="true"
+                            android:text="Capture"
+                            app:cardBackgroundColor="#000000"
+                            app:cardCornerRadius="@dimen/m30dp"
+                            app:cardElevation="0dp" />
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="@dimen/m60dp"
+                            android:layout_height="@dimen/m60dp"
+                            android:layout_centerInParent="true"
+                            android:text="Capture"
+                            app:cardBackgroundColor="#FFFFF7"
+                            app:cardCornerRadius="@dimen/m30dp"
+                            app:cardElevation="0dp" />
+
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/rlVideo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/m80dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerInParent="true"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:visibility="gone">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="@dimen/m70dp"
+                            android:layout_height="@dimen/m70dp"
+                            android:layout_centerInParent="true"
+                            android:text="Capture"
+                            app:cardBackgroundColor="#F8F0F0"
+                            app:cardCornerRadius="@dimen/m35dp"
+                            app:cardElevation="0dp" />
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:layout_centerInParent="true"
+                            android:text="Capture"
+                            app:cardBackgroundColor="#000000"
+                            app:cardCornerRadius="@dimen/m30dp"
+                            app:cardElevation="0dp" />
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/startRecordingButton"
+                            android:layout_width="@dimen/m60dp"
+                            android:layout_height="@dimen/m60dp"
+                            android:layout_centerInParent="true"
+                            android:text="Capture"
+                            app:cardBackgroundColor="@color/red"
+                            app:cardCornerRadius="@dimen/m30dp"
+                            app:cardElevation="0dp" />
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/stopRecordingButton"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_centerInParent="true"
+                            android:text="Capture"
+                            android:visibility="gone"
+                            app:cardBackgroundColor="@color/red"
+                            app:cardCornerRadius="5dp"
+                            app:cardElevation="0dp" />
+
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvDone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/ic_round_corner"
+                    android:gravity="center"
+                    android:paddingHorizontal="15dp"
+                    android:paddingVertical="5dp"
+                    android:text="Done"
+                    android:textColor="@color/black"
+                    android:tint="@color/white" />
+            </LinearLayout>
+        </RelativeLayout>
     </RelativeLayout>
 </layout>
