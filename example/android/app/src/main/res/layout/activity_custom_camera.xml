@@ -189,17 +189,83 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
+                        android:padding="@dimen/m10dp"
                         android:gravity="center"
                         android:text="1.0x"
                         android:textColor="@color/white" />
                     <TextView
                         android:id="@+id/tvTwoX"
                         android:layout_width="0dp"
+                        android:padding="@dimen/m10dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
                         android:text="2.0x"
                         android:textColor="@color/white" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textSize="@dimen/s14sp"
+                    android:layout_marginVertical="@dimen/m10dp"
+                    android:text="Microphone"
+                    android:textColor="@color/white" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/item_bg_gradient"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvMute"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:padding="@dimen/m10dp"
+                        android:gravity="center"
+                        android:text="Mute"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/tvUnmute"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:padding="@dimen/m10dp"
+                        android:gravity="center"
+                        android:text="Unmute"
+                        android:textColor="@color/white" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/m10dp"
+                    android:background="@drawable/item_bg_gradient"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvAudio"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:paddingStart="@dimen/m10dp"
+                        android:padding="@dimen/m10dp"
+                        android:gravity="start"
+                        android:text="Sound"
+                        android:textColor="@color/white" />
+                    <ImageView
+                        android:id="@+id/ivMic"
+                        android:layout_width="@dimen/m30dp"
+                        android:layout_height="@dimen/m40dp"
+                        android:layout_marginRight="@dimen/m30dp"
+                        android:tint="@color/white"
+                        android:src="@drawable/ic_mic_on"/>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

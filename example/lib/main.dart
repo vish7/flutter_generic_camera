@@ -3,9 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_generic_camera/flutter_generic_camera.dart';
+import 'package:flutter_generic_camera_example/CameraId.dart';
 import 'package:flutter_generic_camera_example/CaptureMode.dart';
 import 'package:flutter_generic_camera_example/FlashMode.dart';
+import 'package:flutter_generic_camera_example/MicrophoneMode.dart';
 import 'package:flutter_generic_camera_example/ZoomLevel.dart';
+import 'package:video_player/video_player.dart';
 
 import 'ImageModel.dart';
 
@@ -22,9 +25,12 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final _flutterGenericCameraPlugin = FlutterGenericCamera();
-  var platform = MethodChannel('flutter_generic_camera');
+  var platform = const MethodChannel('flutter_generic_camera');
   String? _imagePath;
   List<ImageModel> imageList = [];
+  late VideoPlayerController _controller;
+  late Future<void> _initializeVideoPlayerFuture;
+
   @override
   void initState() {
     super.initState();
@@ -32,8 +38,19 @@ class _MyAppState extends State<MyApp> {
       if (call.method == 'onImageCaptured') {
         setState(() {
           _imagePath = call.arguments;
+          if (_imagePath.toString().isNotEmpty) {
+            if (_imagePath!.endsWith(".mp4")) {
+              _controller = VideoPlayerController.file(
+                File(_imagePath.toString()),
+              );
+              _initializeVideoPlayerFuture = _controller.initialize();
+              // _controller.play();
+              _controller.setLooping(true);
+              _controller.setVolume(1.0);
+            }
+          }
         });
-      }else if(call.method == 'onImageCapturedList'){
+      } else if (call.method == 'onImageCapturedList') {
         final List<dynamic> list = call.arguments;
         final List<ImageModel> images = list.map((item) {
           final Map<String, dynamic> map = Map<String, dynamic>.from(item);
@@ -41,10 +58,15 @@ class _MyAppState extends State<MyApp> {
         }).toList();
         setState(() {
           imageList = images;
-          print("list lenth" + imageList.length.toString());
         });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -59,48 +81,94 @@ class _MyAppState extends State<MyApp> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _imagePath == null
-              ? Text('No image captured.')
-              : Image.file(File(_imagePath!)),
-            SizedBox(height: 20),
+                ? const Text('No image captured.')
+                : (_imagePath!.endsWith('.mp4')
+                    ? SizedBox(
+                        height: 200,
+                        width: 150,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            FutureBuilder(
+                              future: _initializeVideoPlayerFuture,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  return AspectRatio(
+                                    aspectRatio: _controller.value.aspectRatio,
+                                    child: VideoPlayer(_controller),
+                                  );
+                                } else {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                }
+                              },
+                            ),
+                            FloatingActionButton(
+                              backgroundColor: Colors.black26,
+                              onPressed: () {
+                                setState(() {
+                                  if (_controller.value.isPlaying) {
+                                    _controller.pause();
+                                  } else {
+                                    _controller.play();
+                                  }
+                                });
+                              },
+                              child: Icon(
+                                _controller.value.isPlaying
+                                    ? Icons.pause
+                                    : Icons.play_arrow,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Image.file(File(_imagePath!))),
+            const SizedBox(height: 20),
             Center(
               child: ElevatedButton(
                 onPressed: () {
                   _flutterGenericCameraPlugin.openCamera({
-                    'cameramode': CaptureMode.photo.name.toString(),
+                    'cameramode': CaptureMode.video.name.toString(),
                     'flashmode': FlashMode.auto.name.toString(),
                     'zoomlevel': ZoomLevel.oneX.name.toString(),
-                    'cameraid': '0',
-                    'isMultiCapture': false,
+                    'cameraid': CameraId.back.name.toString(),
+                    'isMicrophone': MicrophoneMode.mute.name.toString(),
+                    'isMultiCapture': true,
                   });
                 },
                 child: const Text("Open Camera"),
               ),
             ),
-            imageList.isEmpty ? Text('No image captured.') :
-            Row(
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    height: 200, // You can set the desired height
-                    child:  ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: imageList.length,
-                      itemBuilder: (context, index) {
-                        final image = imageList[index];
-                        return Container(
-                          width: 150,
-                          // You can set the desired width for each item
-                          child: ListTile(
-                            title: Text('Image ID: ${image.id}'),
-                            subtitle: Image.file(File(image.path.toString())),
+            imageList.isEmpty
+                ? const Text('No image captured.')
+                : Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 200, // You can set the desired height
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: imageList.length,
+                            itemBuilder: (context, index) {
+                              final image = imageList[index];
+                              return SizedBox(
+                                width: 150,
+                                // You can set the desired width for each item
+                                child: ListTile(
+                                  title: Text('Image ID: ${image.id}'),
+                                  subtitle:
+                                      Image.file(File(image.path.toString())),
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
           ],
         ),
       ),

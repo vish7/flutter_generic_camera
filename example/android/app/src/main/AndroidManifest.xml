@@ -13,6 +13,7 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <!--
  Required to query activities that can process text, see:
@@ -32,6 +33,7 @@
     <application
         android:name=".MyApp"
         android:icon="@mipmap/ic_launcher"
+        android:largeHeap="true"
         android:label="flutter_generic_camera_example">
         <activity
             android:name=".CustomCameraActivity"

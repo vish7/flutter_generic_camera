@@ -26,6 +26,7 @@ class MainActivity: FlutterActivity(){
                 val cameraid = arguments[costString.CAMERAID] as String
                 val isMultiCapture = arguments[costString.ISMULTICAPTURE] as Boolean
                 val zoomlevel = arguments[costString.ZOOMLEVEL] as String
+                val microphoneMode = arguments[costString.MICROPHONEMODE]
 
                 val intent = Intent(this, CustomCameraActivity::class.java)
                 intent.putExtra(costString.CAMERAMODE,cameramode)
@@ -33,6 +34,7 @@ class MainActivity: FlutterActivity(){
                 intent.putExtra(costString.CAMERAID,cameraid)
                 intent.putExtra(costString.ISMULTICAPTURE,isMultiCapture)
                 intent.putExtra(costString.ZOOMLEVEL,zoomlevel)
+                intent.putExtra(costString.MICROPHONEMODE,microphoneMode.toString())
                 startActivityForResult(intent, CAMERA_REQUEST_CODE)
                 result.success(null)
 
@@ -46,10 +48,10 @@ class MainActivity: FlutterActivity(){
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
             if (data?.hasExtra("image_path") == true) {
-                val imagePath = data?.getStringExtra("image_path")
+                val imagePath = data.getStringExtra("image_path")
                 MethodChannel(flutterEngine!!.dartExecutor.binaryMessenger,
                     CHANNEL).invokeMethod("onImageCaptured", imagePath)
-            }else{
+            } else {
                 val imageList: ArrayList<ImageModel>? = data?.getParcelableArrayListExtra("image_list")
                 val imageListMap = imageList?.map { image ->
                     mapOf("id" to image.id, "path" to image.path)
