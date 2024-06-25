@@ -1,21 +1,21 @@
 //
 //  GalleryView.swift
-//  Aespa-iOS
+//  XCam-iOS
 //
-//  Created by 이영빈 on 2023/06/12.
+//  Created by Vishal on 2024/06/12.
 //
 
 
 import SwiftUI
 
 struct GalleryView: View {
-    @ObservedObject var viewModel: VideoContentViewModel
+    @ObservedObject var viewModel: GenericCameraViewViewModel
     
     @Binding private var mediaType: AssetType
     
     init(
         mediaType: Binding<AssetType>,
-        contentViewModel viewModel: VideoContentViewModel
+        contentViewModel viewModel: GenericCameraViewViewModel
     ) {
         self._mediaType = mediaType
         self.viewModel = viewModel
@@ -31,48 +31,49 @@ struct GalleryView: View {
             .frame(width: 200)
             .padding(.vertical)
             
-            ScrollView {
-                switch mediaType {
-                case .photo:
-                    LazyVGrid(
-                        columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())],
-                        spacing: 5
-                    ) {
-                        ForEach(viewModel.photoFiles) { file in
-                            let image = file.image
-                            
-                            image
-                                .resizable()
-                                .scaledToFill()
-                        }
-                    }
-                    .onAppear {
-                        viewModel.fetchPhotoFiles()
-                    }
-                case .video:
-                    LazyVGrid(
-                        columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())],
-                        spacing: 5
-                    ) {
-                        ForEach(viewModel.videoFiles) { file in
-                            let image = file.thumbnailImage
-                            
-                            image
-                                .resizable()
-                                .scaledToFill()
-                        }
-                    }
-                    .onAppear {
-                        viewModel.fetchVideoFiles()
-                    }
-                }
-            }
+//            ScrollView {
+//                switch mediaType {
+//                case .photo:
+//                    LazyVGrid(
+//                        columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())],
+//                        spacing: 5
+//                    ) {
+//                        ForEach(viewModel.photoFiles) { file in
+//                            let image = file.image
+//                            
+//                            image
+//                                .resizable()
+//                                .scaledToFill()
+//                        }
+//                    }
+//                    .onAppear {
+//                        viewModel.fetchPhotoFiles()
+//                    }
+//                case .video:
+//                    LazyVGrid(
+//                        columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())],
+//                        spacing: 5
+//                    ) {
+//                        ForEach(viewModel.videoFiles) { file in
+//                            let image = file.thumbnailImage
+//                            
+//                            image
+//                                .resizable()
+//                                .scaledToFill()
+//                        }
+//                    }
+//                    .onAppear {
+//                        viewModel.fetchVideoFiles()
+//                    }
+//                }
+//            }
         }
     }
 }
 
 struct GalleryView_Previews: PreviewProvider {
     static var previews: some View {
-        GalleryView(mediaType: .constant(.video), contentViewModel: .init())
+        let config = GenericCameraConfiguation(captureMode: .photo,canCaputreMultiplePhotos: false, cameraPosition: .back,cameraPhotoFlash: .auto,cameraVideoTorch: .off)
+        GalleryView(mediaType: .constant(.video), contentViewModel: .init(genericCameraConfiguration: config))
     }
 }

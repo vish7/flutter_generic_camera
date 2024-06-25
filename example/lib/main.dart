@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_generic_camera/config/generic_camera_configuration.dart';
 import 'package:flutter_generic_camera/flutter_generic_camera.dart';
 
 void main() {
@@ -33,8 +36,22 @@ class _MyAppState extends State<MyApp> {
           children: [
             Center(
               child: ElevatedButton(
-                onPressed: () {
-                  _flutterGenericCameraPlugin.openCamera();
+                onPressed: () async {
+                  if (Platform.isIOS) {
+                    GenericCameraConfiguration config = GenericCameraConfiguration(
+                      captureMode: AssetType.video,
+                      canCaptureMultiplePhotos: true,
+                      cameraPosition: CameraPosition.front,
+                      cameraPhotoFlash: FlashMode.auto,
+                      cameraVideoTorch: TorchMode.auto, // In case capture mode video
+                    );
+                    var capturedData = await _flutterGenericCameraPlugin.openCamera(config);
+                    if (capturedData["captured_images"] != null) {
+                      debugPrint("Captured Image ${capturedData["captured_images"]}");
+                    } else if (capturedData["captured_video"] != null) {
+                      debugPrint("Captured Video ${capturedData["captured_video"]}");
+                    }
+                  }
                 },
                 child: const Text("Open Camera"),
               ),

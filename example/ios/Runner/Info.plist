@@ -49,5 +49,7 @@
 	</array>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>The app need photo library access to save photos or videos</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>The app need photo library access to save photos or videos</string>
 </dict>
 </plist>
