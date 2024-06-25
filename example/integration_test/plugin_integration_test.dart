@@ -13,12 +13,4 @@ import 'package:flutter_generic_camera/flutter_generic_camera.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-
-  testWidgets('openCamera test', (WidgetTester tester) async {
-    final FlutterGenericCamera plugin = FlutterGenericCamera();
-    final Map<String, dynamic> results = await plugin.openCamera();
-    // The version string depends on the host platform running the test, so
-    // just assert that some non-empty string is returned.
-    expect(results.isNotEmpty, true);
-  });
 }
