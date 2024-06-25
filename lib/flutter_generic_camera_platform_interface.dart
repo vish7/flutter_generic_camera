@@ -1,3 +1,4 @@
+import 'package:flutter_generic_camera/config/generic_camera_configuration.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'flutter_generic_camera_method_channel.dart';
@@ -24,6 +25,9 @@ abstract class FlutterGenericCameraPlatform extends PlatformInterface {
   }
 
   Future<Map<String, dynamic>> openCamera([Map<String, Object>? map]) {
+    throw UnimplementedError('platformVersion() has not been implemented.');
+  }
+  Future<Map<String, dynamic>> openCamera(GenericCameraConfiguration configuration) {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
 }

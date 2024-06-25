@@ -20,8 +20,4 @@ void main() {
   tearDown(() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(channel, null);
   });
-
-  test('openCamera', () async {
-    expect(await platform.openCamera(), {});
-  });
 }

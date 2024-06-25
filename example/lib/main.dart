@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_generic_camera/config/generic_camera_configuration.dart';
 import 'package:flutter_generic_camera/flutter_generic_camera.dart';
 import 'package:flutter_generic_camera_example/CameraId.dart';
 import 'package:flutter_generic_camera_example/CaptureMode.dart';
@@ -129,15 +130,31 @@ class _MyAppState extends State<MyApp> {
             const SizedBox(height: 20),
             Center(
               child: ElevatedButton(
-                onPressed: () {
-                  _flutterGenericCameraPlugin.openCamera({
-                    'cameramode': CaptureMode.video.name.toString(),
-                    'flashmode': FlashMode.auto.name.toString(),
-                    'zoomlevel': ZoomLevel.oneX.name.toString(),
-                    'cameraid': CameraId.back.name.toString(),
-                    'isMicrophone': MicrophoneMode.mute.name.toString(),
-                    'isMultiCapture': true,
-                  });
+                onPressed: () async {
+                  if (Platform.isIOS) {
+                    GenericCameraConfiguration config = GenericCameraConfiguration(
+                      captureMode: AssetType.video,
+                      canCaptureMultiplePhotos: true,
+                      cameraPosition: CameraPosition.front,
+                      cameraPhotoFlash: FlashMode.auto,
+                      cameraVideoTorch: TorchMode.auto, // In case capture mode video
+                    );
+                    var capturedData = await _flutterGenericCameraPlugin.openCamera(config);
+                    if (capturedData["captured_images"] != null) {
+                      debugPrint("Captured Image ${capturedData["captured_images"]}");
+                    } else if (capturedData["captured_video"] != null) {
+                      debugPrint("Captured Video ${capturedData["captured_video"]}");
+                    }
+                  } else {
+                    _flutterGenericCameraPlugin.openCamera({
+                      'cameramode': CaptureMode.video.name.toString(),
+                      'flashmode': FlashMode.auto.name.toString(),
+                      'zoomlevel': ZoomLevel.oneX.name.toString(),
+                      'cameraid': CameraId.back.name.toString(),
+                      'isMicrophone': MicrophoneMode.mute.name.toString(),
+                      'isMultiCapture': true,
+                    });
+                  }
                 },
                 child: const Text("Open Camera"),
               ),
