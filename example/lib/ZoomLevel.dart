@@ -1,0 +1,1 @@
+enum ZoomLevel{oneX,zeroPointFiveX,twoX}
