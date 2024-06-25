@@ -24,9 +24,9 @@ abstract class FlutterGenericCameraPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<Map<String, dynamic>> openCamera([Map<String, Object>? map]) {
-    throw UnimplementedError('platformVersion() has not been implemented.');
-  }
+  // Future<Map<String, dynamic>> openCamera([Map<String, Object>? map]) {
+  //   throw UnimplementedError('platformVersion() has not been implemented.');
+  // }
   Future<Map<String, dynamic>> openCamera(GenericCameraConfiguration configuration) {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }

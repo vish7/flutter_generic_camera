@@ -1,1 +1,0 @@
-enum CameraId{front,back}

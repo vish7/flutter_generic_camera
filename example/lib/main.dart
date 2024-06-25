@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_generic_camera/config/generic_camera_configuration.dart';
 import 'package:flutter_generic_camera/flutter_generic_camera.dart';
-import 'package:flutter_generic_camera_example/CameraId.dart';
-import 'package:flutter_generic_camera_example/CaptureMode.dart';
-import 'package:flutter_generic_camera_example/FlashMode.dart';
 import 'package:flutter_generic_camera_example/MicrophoneMode.dart';
 import 'package:flutter_generic_camera_example/ZoomLevel.dart';
 import 'package:video_player/video_player.dart';
@@ -93,15 +90,13 @@ class _MyAppState extends State<MyApp> {
                             FutureBuilder(
                               future: _initializeVideoPlayerFuture,
                               builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.done) {
+                                if (snapshot.connectionState == ConnectionState.done) {
                                   return AspectRatio(
                                     aspectRatio: _controller.value.aspectRatio,
                                     child: VideoPlayer(_controller),
                                   );
                                 } else {
-                                  return const Center(
-                                      child: CircularProgressIndicator());
+                                  return const Center(child: CircularProgressIndicator());
                                 }
                               },
                             ),
@@ -117,9 +112,7 @@ class _MyAppState extends State<MyApp> {
                                 });
                               },
                               child: Icon(
-                                _controller.value.isPlaying
-                                    ? Icons.pause
-                                    : Icons.play_arrow,
+                                _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
                                 color: Colors.white,
                               ),
                             ),
@@ -133,7 +126,7 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () async {
                   if (Platform.isIOS) {
                     GenericCameraConfiguration config = GenericCameraConfiguration(
-                      captureMode: AssetType.video,
+                      captureMode: AssetType.photo,
                       canCaptureMultiplePhotos: true,
                       cameraPosition: CameraPosition.front,
                       cameraPhotoFlash: FlashMode.auto,
@@ -146,14 +139,23 @@ class _MyAppState extends State<MyApp> {
                       debugPrint("Captured Video ${capturedData["captured_video"]}");
                     }
                   } else {
-                    _flutterGenericCameraPlugin.openCamera({
-                      'cameramode': CaptureMode.video.name.toString(),
-                      'flashmode': FlashMode.auto.name.toString(),
-                      'zoomlevel': ZoomLevel.oneX.name.toString(),
-                      'cameraid': CameraId.back.name.toString(),
-                      'isMicrophone': MicrophoneMode.mute.name.toString(),
-                      'isMultiCapture': true,
-                    });
+                    GenericCameraConfiguration config = GenericCameraConfiguration(
+                      captureMode: AssetType.video,
+                      canCaptureMultiplePhotos: true,
+                      cameraPosition: CameraPosition.front,
+                      cameraPhotoFlash: FlashMode.auto,
+                      cameraVideoTorch: TorchMode.auto, // In case capture mode video
+                    );
+                    _flutterGenericCameraPlugin.openCamera(config);
+
+                    // _flutterGenericCameraPlugin.openCamera({
+                    //   'cameramode': CaptureMode.video.name.toString(),
+                    //   'flashmode': FlashMode.auto.name.toString(),
+                    //   'zoomlevel': ZoomLevel.oneX.name.toString(),
+                    //   'cameraid': CameraId.back.name.toString(),
+                    //   'isMicrophone': MicrophoneMode.mute.name.toString(),
+                    //   'isMultiCapture': true,
+                    // });
                   }
                 },
                 child: const Text("Open Camera"),
@@ -176,8 +178,7 @@ class _MyAppState extends State<MyApp> {
                                 // You can set the desired width for each item
                                 child: ListTile(
                                   title: Text('Image ID: ${image.id}'),
-                                  subtitle:
-                                      Image.file(File(image.path.toString())),
+                                  subtitle: Image.file(File(image.path.toString())),
                                 ),
                               );
                             },
