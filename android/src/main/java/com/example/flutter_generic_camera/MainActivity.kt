@@ -1,4 +1,4 @@
-package com.example.flutter_generic_camera_example
+package com.example.flutter_generic_camera
 
 import android.Manifest
 import android.content.Context
@@ -23,78 +23,95 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.example.flutter_generic_camera_example.adapter.ImageItemAdapter
-import com.example.flutter_generic_camera_example.databinding.ActivityCustomCameraBinding
-import com.example.flutter_generic_camera_example.model.ImageModel
+import com.example.flutter_generic_camera.adapter.ImageItemAdapter
+import com.example.flutter_generic_camera.databinding.ActivityMainBinding
+import com.example.flutter_generic_camera.enum.AssetType
+import com.example.flutter_generic_camera.enum.CameraPosition
+import com.example.flutter_generic_camera.enum.FlashMode
+import com.example.flutter_generic_camera.model.GenericCameraConfiguration
+import com.example.flutter_generic_camera.model.ImageModel
 import com.example.flutter_generic_camera_example.utils.costString
-import com.example.flutter_generic_camera_example.utils.costString.AUTO
-import com.example.flutter_generic_camera_example.utils.costString.BACK
-import com.example.flutter_generic_camera_example.utils.costString.FRONT
-import com.example.flutter_generic_camera_example.utils.costString.MUTE
-import com.example.flutter_generic_camera_example.utils.costString.OFF
-import com.example.flutter_generic_camera_example.utils.costString.ON
-import com.example.flutter_generic_camera_example.utils.costString.PHOTO
-import com.example.flutter_generic_camera_example.utils.costString.VIDEO
 import dagger.hilt.android.AndroidEntryPoint
 
-
 @AndroidEntryPoint
-class CustomCameraActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityCustomCameraBinding
+class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
     private val REQUEST_RECORD_AUDIO_PERMISSION = 200
-    var flashtype: Int? = -1
-    var flashmode: String? = null
+    var flashtype: Int? = ImageCapture.FLASH_MODE_AUTO
+
+    //   var cameraVideoTorch: Int? = 0
+    var flashmode: Int? = null
     var zoomlevel: String? = null
     var microphonemode: String? = null
     var isMultiCapture = false
     var cameramode = costString.CAMERAMODEVALUE
-    private var cameraId = costString.CAMERA_BACK
+
+    //    private var cameraId = costString.CAMERA_BACK
+    private var cameraId = CameraPosition.BACK
     private val viewModel: CameraViewModel by viewModels()
     private val requestCodePermissions = 10
     private val requiredPermissions = arrayOf(Manifest.permission.CAMERA)
-    private val imageList: ArrayList<ImageModel> = ArrayList()
+    private val imageList: ArrayList<String/*ImageModel*/> = ArrayList()
+    private val imageListFinal: ArrayList<String> = ArrayList()
     private val adapter = ImageItemAdapter()
     var zoomRatio = 0.0f
     private lateinit var timer: CountDownTimer
     private var isAudioEnable: Boolean? = true
     private var mSensorManager: SensorManager? = null
     private var mLightSensor: Sensor? = null
+    var supportsSixTenthsZoom: Boolean = false
+
+    companion object {
+        var listner: ImageListener? = null
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityCustomCameraBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initData()
     }
 
     fun initData() {
-        val intent = intent
-        cameraId = intent.getStringExtra(costString.CAMERAID).toString()
-        cameramode = intent.getStringExtra(costString.CAMERAMODE).toString()
-        flashmode = intent.getStringExtra(costString.FLASHMODE).toString()
-        zoomlevel = intent.getStringExtra(costString.ZOOMLEVEL).toString()
-        isMultiCapture = intent.getBooleanExtra(costString.ISMULTICAPTURE, false)
-        microphonemode = intent.getStringExtra(costString.MICROPHONEMODE).toString()
 
+        val intent = intent
+
+        if (intent.hasExtra("config")) {
+            val config = intent.getSerializableExtra("config") as GenericCameraConfiguration
+            // Now you have the ConfigModel object from MainActivity
+            Log.d("CONFIG_MODEL", config.toString())
+
+            cameraId = config.cameraPosition
+            cameramode = config.captureMode.toString()
+            if (cameramode == AssetType.VIDEO.name) {
+                flashmode = config.cameraVideoTorch
+            } else {
+                flashmode = config.cameraPhotoFlash
+            }
+//        cameraVideoTorch = config.cameraVideoTorch
+            zoomlevel = "oneX"
+            isMultiCapture = config.canCaptureMultiplePhotos
+            microphonemode = "mute"
+        }
         initLightSensor()
         getSupportedZoomLevels()
 
-        if (flashmode.equals(AUTO)) {
-            flashtype = ImageCapture.FLASH_MODE_AUTO
-            selectFlashItem(binding.tvAuto)
-        } else if (flashmode.equals(ON)) {
-            flashtype = ImageCapture.FLASH_MODE_ON
+        if (flashmode!! == 0) {
+            flashtype = FlashMode.AUTO
+            selectFlashItem(binding.tvOff/*tvAuto*/)
+        } else if (flashmode == 1) {
+            flashtype = FlashMode.ON
             selectFlashItem(binding.tvOn)
-        } else if (flashmode.equals(OFF)) {
-            flashtype = ImageCapture.FLASH_MODE_OFF
-            selectFlashItem(binding.tvOff)
+        } else if (flashmode == 2) {
+            flashtype = FlashMode.OFF
+            selectFlashItem(binding.tvAuto/*tvOff*/)
         }
 
-        if (cameraId == FRONT) {
-            cameraId = costString.CAMERA_FRONT
+        if (cameraId == CameraPosition.FRONT) {
+            cameraId = CameraPosition.FRONT/*costString.CAMERA_FRONT*/
             selectCameraItem(binding.tvFront)
-        } else if (cameraId == BACK) {
-            cameraId = costString.CAMERA_BACK
+        } else if (cameraId == CameraPosition.BACK/*costString.BACK*/) {
+            cameraId = CameraPosition.BACK/*costString.CAMERA_BACK*/
             selectCameraItem(binding.tvBack)
         }
 
@@ -113,7 +130,7 @@ class CustomCameraActivity : AppCompatActivity() {
             }
         }
 
-        if (microphonemode == MUTE) {
+        if (microphonemode == costString.MUTE) {
             isAudioEnable = false
             selectMicrophoneItem(binding.tvMute)
         } else {
@@ -121,7 +138,7 @@ class CustomCameraActivity : AppCompatActivity() {
             selectMicrophoneItem(binding.tvUnmute)
         }
 
-        if (cameramode == VIDEO) {
+        if (cameramode.equals(AssetType.VIDEO.name.toString())) {
             binding.tvPhoto.text = resources.getString(R.string.Video)
             binding.rlVideo.visibility = View.VISIBLE
             binding.rlPhotos.visibility = View.GONE
@@ -191,22 +208,34 @@ class CustomCameraActivity : AppCompatActivity() {
                 )
                 .into(binding.ivImage)
             if (isMultiCapture) {
-                imageList.add(ImageModel(imageList.size + 1, photoFile.absolutePath))
-                imageList.size
+                imageList.add(/*ImageModel(imageList.size + 1,*/ photoFile.absolutePath)/*)*/
                 viewModel.setItems(imageList)
+
+                imageListFinal.add(photoFile.absolutePath.toString())
+
             } else {
-                setResult(RESULT_OK, intent.putExtra("image_path", photoFile.absolutePath))
+                imageList.clear()
+                imageList.add(/*ImageModel(imageList.size + 1,*/ photoFile.absolutePath)/*)*/
+                viewModel.setItems(imageList)
+
+                imageListFinal.add(photoFile.absolutePath.toString())
+                if (listner != null) {
+                    listner?.imagePath(imageListFinal)
+                    Log.d("LISTENERIMAGE", "NotNull")
+                } else {
+                    Log.d("LISTENERIMAGE", "Null")
+                }
                 finish()
             }
         }
 
         viewModel.videoFile.observe(this) { videoFile ->
             Log.e("video uri", videoFile.path.toString())
-            setResult(RESULT_OK, intent.putExtra("image_path", videoFile.path))
+            listner?.videoPath(videoFile.path!!)
             finish()
         }
         binding.tvDone.setOnClickListener {
-            setResult(RESULT_OK, intent.putParcelableArrayListExtra("image_list", imageList))
+            listner?.imagePath(imageListFinal)
             finish()
         }
         viewModel.imageItems.observe(this) { imageItems ->
@@ -253,30 +282,34 @@ class CustomCameraActivity : AppCompatActivity() {
         binding.tvAuto.setOnClickListener {
             flashtype = ImageCapture.FLASH_MODE_AUTO
             selectFlashItem(binding.tvAuto)
-            if (cameramode == PHOTO) {
+            if (cameramode == AssetType.PHOTO.name) {
                 viewModel.setFlashMood(flashtype!!)
             }
         }
         binding.tvOn.setOnClickListener {
             flashtype = ImageCapture.FLASH_MODE_ON
+
             selectFlashItem(binding.tvOn)
-            if (cameramode == VIDEO) {
-                viewModel.enableTorch(true)
+            if (cameramode == AssetType.VIDEO.name) {
+//                viewModel.enableTorch(true)
             } else {
                 viewModel.setFlashMood(flashtype!!)
             }
         }
         binding.tvOff.setOnClickListener {
+
             flashtype = ImageCapture.FLASH_MODE_OFF
+
+
             selectFlashItem(binding.tvOff)
-            if (cameramode == VIDEO) {
-                viewModel.enableTorch(false)
+            if (cameramode == AssetType.VIDEO.name) {
+//                viewModel.enableTorch(false)
             } else {
                 viewModel.setFlashMood(flashtype!!)
             }
         }
         binding.tvFront.setOnClickListener {
-            cameraId = costString.CAMERA_FRONT
+            cameraId = CameraPosition.FRONT/*costString.CAMERA_FRONT*/
             selectCameraItem(binding.tvFront)
             viewModel.initializeCamera(this,
                 cameraId,
@@ -285,7 +318,7 @@ class CustomCameraActivity : AppCompatActivity() {
                 binding.viewFinder)
         }
         binding.tvBack.setOnClickListener {
-            cameraId = costString.CAMERA_BACK
+            cameraId = CameraPosition.BACK/*costString.CAMERA_BACK*/
             selectCameraItem(binding.tvBack)
             viewModel.initializeCamera(this,
                 cameraId,
@@ -294,7 +327,11 @@ class CustomCameraActivity : AppCompatActivity() {
                 binding.viewFinder)
         }
         binding.tvZeroPointFiveX.setOnClickListener {
-            zoomRatio = 0.5f
+            if (supportsSixTenthsZoom) {
+                zoomRatio = 0.6f
+            } else {
+                zoomRatio = 0.5f
+            }
             selectZoomItem(binding.tvZeroPointFiveX)
             viewModel.setZooming(this, zoomRatio, binding.viewFinder)
         }
@@ -421,7 +458,7 @@ class CustomCameraActivity : AppCompatActivity() {
                     }
 
                     // Check for support of 0.6x zoom
-                    val supportsSixTenthsZoom = zoomRatioRange?.let { range ->
+                    supportsSixTenthsZoom = zoomRatioRange?.let { range ->
                         range.lower <= 0.6 && 0.6 <= range.upper
                     } ?: (maxZoom != null && maxZoom >= 0.6)
 
@@ -443,6 +480,7 @@ class CustomCameraActivity : AppCompatActivity() {
 
                     if (supportsSixTenthsZoom) {
                         println("Supports 0.6x zoom")
+                        binding.tvZeroPointFiveX.text = "0.6x"
                     } else {
                         println("Does not support 0.6x zoom")
                     }
@@ -452,4 +490,5 @@ class CustomCameraActivity : AppCompatActivity() {
             e.printStackTrace()
         }
     }
+
 }

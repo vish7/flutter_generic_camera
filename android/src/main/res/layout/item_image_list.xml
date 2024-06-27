@@ -5,7 +5,8 @@
     <data>
         <variable
             name="item"
-            type="com.example.flutter_generic_camera_example.model.ImageModel" />
+            type="String" />
+<!--            type="com.example.flutter_generic_camera.model.ImageModel" />-->
     </data>
 
     <LinearLayout
@@ -18,6 +19,6 @@
             android:id="@+id/ivImage"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@{item.path}" />
+            android:src="@{item}" />
     </LinearLayout>
 </layout>

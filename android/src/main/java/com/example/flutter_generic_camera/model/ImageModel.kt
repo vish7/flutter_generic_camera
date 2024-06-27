@@ -1,4 +1,4 @@
-package com.example.flutter_generic_camera_example.model
+package com.example.flutter_generic_camera.model
 
 import android.os.Parcel
 import android.os.Parcelable

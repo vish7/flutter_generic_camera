@@ -15,8 +15,8 @@ object  costString {
     const val CAMERA_FRONT = "1"
     const val CAMERA_BACK = "0"
 
-    const val VIDEO = "video"
-    const val PHOTO = "Photo"
+//    const val VIDEO = "video"
+//    const val PHOTO = "Photo"
     const val AUTO = "auto"
     const val ON = "on"
     const val OFF = "off"
