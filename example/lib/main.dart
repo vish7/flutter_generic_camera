@@ -4,11 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_generic_camera/config/generic_camera_configuration.dart';
 import 'package:flutter_generic_camera/flutter_generic_camera.dart';
-import 'package:flutter_generic_camera_example/MicrophoneMode.dart';
-import 'package:flutter_generic_camera_example/ZoomLevel.dart';
 import 'package:video_player/video_player.dart';
-
-import 'ImageModel.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,40 +21,14 @@ class _MyAppState extends State<MyApp> {
   final _flutterGenericCameraPlugin = FlutterGenericCamera();
   var platform = const MethodChannel('flutter_generic_camera');
   String? _imagePath;
-  List<ImageModel> imageList = [];
+  List<String> imageList = [];
   late VideoPlayerController _controller;
   late Future<void> _initializeVideoPlayerFuture;
+  String filePath = "";
 
   @override
   void initState() {
     super.initState();
-    platform.setMethodCallHandler((call) async {
-      if (call.method == 'onImageCaptured') {
-        setState(() {
-          _imagePath = call.arguments;
-          if (_imagePath.toString().isNotEmpty) {
-            if (_imagePath!.endsWith(".mp4")) {
-              _controller = VideoPlayerController.file(
-                File(_imagePath.toString()),
-              );
-              _initializeVideoPlayerFuture = _controller.initialize();
-              // _controller.play();
-              _controller.setLooping(true);
-              _controller.setVolume(1.0);
-            }
-          }
-        });
-      } else if (call.method == 'onImageCapturedList') {
-        final List<dynamic> list = call.arguments;
-        final List<ImageModel> images = list.map((item) {
-          final Map<String, dynamic> map = Map<String, dynamic>.from(item);
-          return ImageModel.fromMap(map);
-        }).toList();
-        setState(() {
-          imageList = images;
-        });
-      }
-    });
   }
 
   @override
@@ -70,6 +40,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Flutter Generic Camera example app'),
@@ -90,13 +61,15 @@ class _MyAppState extends State<MyApp> {
                             FutureBuilder(
                               future: _initializeVideoPlayerFuture,
                               builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.done) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
                                   return AspectRatio(
                                     aspectRatio: _controller.value.aspectRatio,
                                     child: VideoPlayer(_controller),
                                   );
                                 } else {
-                                  return const Center(child: CircularProgressIndicator());
+                                  return const Center(
+                                      child: CircularProgressIndicator());
                                 }
                               },
                             ),
@@ -112,7 +85,9 @@ class _MyAppState extends State<MyApp> {
                                 });
                               },
                               child: Icon(
-                                _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                                _controller.value.isPlaying
+                                    ? Icons.pause
+                                    : Icons.play_arrow,
                                 color: Colors.white,
                               ),
                             ),
@@ -140,29 +115,92 @@ class _MyAppState extends State<MyApp> {
                     }
                   } else {
                     GenericCameraConfiguration config = GenericCameraConfiguration(
-                      captureMode: AssetType.video,
+                      captureMode: AssetType.photo,
                       canCaptureMultiplePhotos: true,
                       cameraPosition: CameraPosition.front,
                       cameraPhotoFlash: FlashMode.auto,
                       cameraVideoTorch: TorchMode.auto, // In case capture mode video
                     );
-                    _flutterGenericCameraPlugin.openCamera(config);
+                    var capturedData =
+                        await _flutterGenericCameraPlugin.openCamera(config);
+                    if (capturedData["captured_images"] != null) {
+                      debugPrint("Captured Image ${capturedData["captured_images"]}");
+                      // imageList.addAll(capturedData["captured_images"]);
+                      imageList.clear();
+                      imageList.addAll(capturedData["captured_images"].cast<String>());
+                      setState(() {
+                      });
+                    } else if (capturedData["captured_video"] != null) {
+                      debugPrint(
+                          "Captured Video ${capturedData["captured_video"]}");
 
-                    // _flutterGenericCameraPlugin.openCamera({
-                    //   'cameramode': CaptureMode.video.name.toString(),
-                    //   'flashmode': FlashMode.auto.name.toString(),
-                    //   'zoomlevel': ZoomLevel.oneX.name.toString(),
-                    //   'cameraid': CameraId.back.name.toString(),
-                    //   'isMicrophone': MicrophoneMode.mute.name.toString(),
-                    //   'isMultiCapture': true,
-                    // });
+                      String pathWithoutProtocol =
+                          capturedData["captured_video"]
+                              .substring("file:".length);
+                      filePath = Uri.decodeFull(pathWithoutProtocol);
+
+                      setState(() {
+                        _controller =
+                            VideoPlayerController.file(File(filePath));
+                        _initializeVideoPlayerFuture = _controller.initialize();
+                        _controller.setLooping(true);
+                        _controller.setVolume(1.0);
+                      });
+
+                      // _controller.pla
+                    }
                   }
                 },
                 child: const Text("Open Camera"),
               ),
             ),
             imageList.isEmpty
-                ? const Text('No image captured.')
+                ? (filePath.isNotEmpty ? SizedBox(
+                    height: 200,
+                    width: 150,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        FutureBuilder(
+                          future: filePath.isEmpty
+                              ? _initializeVideoPlayerFuture =
+                                  _controller.initialize()
+                              : _initializeVideoPlayerFuture,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              return AspectRatio(
+                                aspectRatio: _controller.value.aspectRatio,
+                                child: VideoPlayer(_controller),
+                              );
+                            } else {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+                          },
+                        ),
+                        FloatingActionButton(
+                          backgroundColor: Colors.black26,
+                          onPressed: () {
+                            setState(() {
+                              if (_controller.value.isPlaying) {
+                                _controller.pause();
+                              } else {
+                                _controller.play();
+                              }
+                            });
+                          },
+                          child: Icon(
+                            _controller.value.isPlaying
+                                ? Icons.pause
+                                : Icons.play_arrow,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ) : const SizedBox()
+            )
                 : Row(
                     children: [
                       Expanded(
@@ -177,8 +215,7 @@ class _MyAppState extends State<MyApp> {
                                 width: 150,
                                 // You can set the desired width for each item
                                 child: ListTile(
-                                  title: Text('Image ID: ${image.id}'),
-                                  subtitle: Image.file(File(image.path.toString())),
+                                  subtitle: Image.file(File(image.toString())),
                                 ),
                               );
                             },

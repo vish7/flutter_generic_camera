@@ -1,24 +1,25 @@
-package com.example.flutter_generic_camera_example.adapter
+package com.example.flutter_generic_camera.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.flutter_generic_camera_example.databinding.ItemImageListBinding
-import com.example.flutter_generic_camera_example.model.ImageModel
+import com.example.flutter_generic_camera.databinding.ItemImageListBinding
+import com.example.flutter_generic_camera.model.ImageModel
 
 class ImageItemAdapter : RecyclerView.Adapter<ImageItemAdapter.ItemViewHolder>() {
 
-    private var items: List<ImageModel> = emptyList()
+//    private var items: List<ImageModel> = emptyList()
+    private var items: List<String> = listOf()
 
     class ItemViewHolder(val binding: ItemImageListBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val layoutInflater = LayoutInflater.from(parent.context)
-        val binding = ItemImageListBinding.inflate(layoutInflater, parent, false)
+        val binding = ItemImageListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ItemViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
+//        holder.binding.(items[position])
         holder.binding.item = items[position]
         holder.binding.executePendingBindings()
     }
@@ -27,7 +28,7 @@ class ImageItemAdapter : RecyclerView.Adapter<ImageItemAdapter.ItemViewHolder>()
         return items.size
     }
 
-    fun setItems(items: List<ImageModel>) {
+    fun setItems(items: List<String>) {
         this.items = items
         notifyDataSetChanged()
     }

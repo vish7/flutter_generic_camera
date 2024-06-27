@@ -31,11 +31,11 @@
     </queries>
 
     <application
-        android:name=".MyApp"
+
         android:icon="@mipmap/ic_launcher"
         android:largeHeap="true"
         android:label="flutter_generic_camera_example">
-        <activity
+        <!--<activity
             android:name=".CustomCameraActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:theme="@style/AppTheme"
@@ -43,7 +43,7 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-        </activity>
+        </activity>-->
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"

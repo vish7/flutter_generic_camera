@@ -1,4 +1,4 @@
-package com.example.flutter_generic_camera_example
+package com.example.flutter_generic_camera
 
 import android.content.Context
 import android.hardware.Sensor
@@ -20,8 +20,9 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.flutter_generic_camera_example.model.ImageModel
-import com.example.flutter_generic_camera_example.utils.costString.VIDEO
+import com.example.flutter_generic_camera.enum.AssetType
+import com.example.flutter_generic_camera.enum.CameraPosition
+import com.example.flutter_generic_camera.model.ImageModel
 import com.google.common.util.concurrent.ListenableFuture
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
@@ -29,13 +30,13 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class CameraViewModel @Inject constructor() : ViewModel()/*, SensorEventListener*/ {
+class CameraViewModel @Inject constructor() : ViewModel() {
 
     lateinit var videoCapture: VideoCapture<Recorder>
     private val _photoFile = MutableLiveData<File>()
     val photoFile: LiveData<File> get() = _photoFile
-    private val _imageItems = MutableLiveData<List<ImageModel>>()
-    val imageItems: LiveData<List<ImageModel>> get() = _imageItems
+    private val _imageItems = MutableLiveData<List<String/*ImageModel*/>>()
+    val imageItems: LiveData<List<String/*ImageModel*/>> get() = _imageItems
     var currentRecording: Recording? = null
     var isRecording = false
     private val _videoFile = MutableLiveData<Uri>()
@@ -51,7 +52,7 @@ class CameraViewModel @Inject constructor() : ViewModel()/*, SensorEventListener
 
     fun initializeCamera(
         context: Context,
-        cameraId: String,
+        cameraId: Int,
         flashmode: Int,
         zoomRatio: Float,
         previewView: PreviewView
@@ -63,13 +64,12 @@ class CameraViewModel @Inject constructor() : ViewModel()/*, SensorEventListener
                 it.setSurfaceProvider(previewView.surfaceProvider)
             }
             imageCapture = ImageCapture.Builder().build()
-            setFlashMood(flashmode)
             val recorder = Recorder.Builder()
                 .setQualitySelector(QualitySelector.from(Quality.HIGHEST))
                 .build()
             val videoCapture = VideoCapture.withOutput(recorder)
 
-            cameraSelector = if (cameraId == "1") {
+            cameraSelector = if (cameraId == CameraPosition.FRONT /*"1"*/) {
                 CameraSelector.DEFAULT_FRONT_CAMERA
             } else {
                 CameraSelector.DEFAULT_BACK_CAMERA
@@ -81,7 +81,7 @@ class CameraViewModel @Inject constructor() : ViewModel()/*, SensorEventListener
                 // Handle exception
             }
             camera = cameraProvider.bindToLifecycle(
-                context as CustomCameraActivity,
+                context as MainActivity,
                 cameraSelector,
                 preview,
                 imageCapture,
@@ -151,7 +151,7 @@ class CameraViewModel @Inject constructor() : ViewModel()/*, SensorEventListener
         )
     }
 
-    fun setItems(items: List<ImageModel>) {
+    fun setItems(items: ArrayList<String/*ImageModel*/>) {
         _imageItems.value = items
     }
 
@@ -195,7 +195,12 @@ class CameraViewModel @Inject constructor() : ViewModel()/*, SensorEventListener
             File(context.externalMediaDirs.firstOrNull(), "${System.currentTimeMillis()}.mp4")
         val outputOptions = FileOutputOptions.Builder(videoFile).build()
 
-        if (cameramode == VIDEO) {
+        if (flashmode == ImageCapture.FLASH_MODE_ON){
+            enableTorch(true)
+        }else if(flashmode == ImageCapture.FLASH_MODE_OFF){
+            enableTorch(false)
+        }
+        if (cameramode.equals(AssetType.VIDEO.name.toString())) {
             if (flashmode == ImageCapture.FLASH_MODE_AUTO) {
                 getLightLevelEvent(mSensorManager, mLightSensor)
             }
