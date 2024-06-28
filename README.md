@@ -1,4 +1,4 @@
-# FlutterGenericCamera
+# flutter_generic_camera
 📸 A Flutter plugin that provides a custom camera interface for both Android and iOS, supporting various advanced features including photo capture, video recording, mute, zoom, front and back camera switching, and multiple photo capture.
 
 ## Native features
