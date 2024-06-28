@@ -1,7 +1,7 @@
 name: flutter_generic_camera
-description: "A new Flutter plugin project."
+description: "Introducing our Custom Generic Plugin for Flutter, designed to seamlessly integrate with both iOS and Android platforms. This plugin provides a highly customizable camera interface, enabling developers to implement tailored camera functionalities within their Flutter applications effortlessly."
 version: 0.0.1
-homepage:
+homepage: https://github.com/vish7/flutter_generic_camera.git
 
 environment:
   sdk: '>=3.3.3 <4.0.0'
